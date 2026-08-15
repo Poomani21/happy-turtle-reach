@@ -51,7 +51,24 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPost() {
-  const { post } = Route.useLoaderData();
+  const { post: staticPost } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { data: firebasePosts, isPending } = useQuery({
+    queryKey: ["published-firebase-blogs"],
+    queryFn: fetchPublishedFirebasePosts,
+    enabled: !staticPost,
+    staleTime: 60_000,
+  });
+
+  if (staticPost) return <BlogPostView post={staticPost} />;
+  if (isPending || !firebasePosts) return <div className="container-site py-24" />;
+
+  const firebasePost = firebasePosts.find((p) => p.slug === slug);
+  if (!firebasePost) throw notFound();
+  return <BlogPostView post={firebasePost} />;
+}
+
+function BlogPostView({ post }: { post: Post }) {
   const related = posts.filter((p) => p.slug !== post.slug).slice(0, 2);
 
   return (
