@@ -19,7 +19,7 @@ export const Route = createFileRoute("/blog/$slug")({
         meta: [{ title: "Article unavailable | Turtle Wings" }, { name: "robots", content: "noindex" }],
       };
     }
-    const { post } = loaderData;
+    const post = loaderData.post;
     const pageTitle = `${post.title} | Turtle Wings Blog`;
     return {
       meta: [
