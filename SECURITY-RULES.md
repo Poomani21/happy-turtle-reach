@@ -43,3 +43,11 @@ Uploads land in `<collection>/<timestamp>-<filename>` (`blogs/`, `videos/`,
   website), admin-only write/delete.
 - `members/` — admin read and write only, since member photos are private.
 - All other paths are denied.
+
+## Admin allowlist in the panel
+
+`/admin` now mirrors the rules in the UI: after Firebase sign-in the panel calls
+`isAdminUser(uid)` (a read of `admins/{uid}`). Accounts that are not on the
+allowlist see a "cannot manage content" screen with their UID and a sign-out
+button instead of the content manager. Add the UID as a document at
+`admins/{uid}` in the Firebase console to grant access.
