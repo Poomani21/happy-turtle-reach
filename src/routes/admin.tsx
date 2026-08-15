@@ -25,7 +25,7 @@ const adminLinks = [
 ] as const;
 
 function AdminLayout() {
-  const { user, loading, error } = useAdminAuth();
+  const { user, isAdmin, loading, error } = useAdminAuth();
 
   if (loading) {
     return (
@@ -38,6 +38,8 @@ function AdminLayout() {
   }
 
   if (!user) return <SignIn initialError={error} />;
+
+  if (!isAdmin) return <NotAuthorised email={user.email} uid={user.uid} />;
 
   return (
     <div className="container-site py-10">
@@ -69,6 +71,31 @@ function AdminLayout() {
       <div className="mt-8">
         <Outlet />
       </div>
+    </div>
+  );
+}
+
+function NotAuthorised({ email, uid }: { email: string | null; uid: string }) {
+  return (
+    <div className="container-site max-w-md py-16">
+      <h1 className="font-display text-2xl font-extrabold text-forest-deep">
+        This account cannot manage content
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {email ?? "This account"} is signed in but is not on the administrator allowlist, so the
+        content manager stays locked. Ask the site owner to add this user ID to the allowlist in
+        Firebase.
+      </p>
+      <p className="mt-4 rounded-xl border border-border bg-card p-3 font-mono text-xs break-all">
+        {uid}
+      </p>
+      <button
+        type="button"
+        onClick={() => void adminSignOut()}
+        className="mt-6 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-input px-4 font-bold"
+      >
+        <LogOut aria-hidden="true" className="size-3.5" /> Sign out
+      </button>
     </div>
   );
 }
