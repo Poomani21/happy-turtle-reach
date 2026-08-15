@@ -16,7 +16,6 @@ import { getDb, getFirebase } from "./firebase";
 import type {
   BlogDoc,
   EnquiryDoc,
-  MemberDoc,
   ProgramDoc,
   SiteSettings,
   VideoDoc,
