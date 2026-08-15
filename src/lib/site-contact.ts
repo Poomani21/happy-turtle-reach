@@ -19,7 +19,7 @@ export type SiteContact = {
   website: string;
   timings: string;
   closed: string;
-  mapEmbedUrl?: string;
+  mapEmbedUrl?: string | undefined;
 };
 
 const clean = (value?: string) => (typeof value === "string" && value.trim() ? value.trim() : "");
