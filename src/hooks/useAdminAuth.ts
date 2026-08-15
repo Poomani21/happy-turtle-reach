@@ -6,9 +6,12 @@ import {
   type User,
 } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
+import { isAdminUser } from "@/lib/cms";
 
 export type AdminAuthState = {
   user: User | null;
+  /** True only when the signed-in UID exists in the Firestore admins allowlist. */
+  isAdmin: boolean;
   loading: boolean;
   error: string | null;
 };
@@ -16,6 +19,7 @@ export type AdminAuthState = {
 export function useAdminAuth(): AdminAuthState {
   const [state, setState] = useState<AdminAuthState>({
     user: null,
+    isAdmin: false,
     loading: true,
     error: null,
   });
@@ -26,12 +30,19 @@ export function useAdminAuth(): AdminAuthState {
     getFirebaseAuth()
       .then((auth) => {
         if (!active) return;
-        unsubscribe = onAuthStateChanged(auth, (user) =>
-          setState({ user, loading: false, error: null }),
-        );
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (!user) {
+            setState({ user: null, isAdmin: false, loading: false, error: null });
+            return;
+          }
+          setState({ user, isAdmin: false, loading: true, error: null });
+          void isAdminUser(user.uid).then((isAdmin) => {
+            if (active) setState({ user, isAdmin, loading: false, error: null });
+          });
+        });
       })
       .catch((error: Error) =>
-        setState({ user: null, loading: false, error: error.message }),
+        setState({ user: null, isAdmin: false, loading: false, error: error.message }),
       );
     return () => {
       active = false;
