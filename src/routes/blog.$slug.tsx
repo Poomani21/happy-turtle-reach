@@ -1,17 +1,20 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, CalendarDays, User } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { CtaBand } from "@/components/site/Sections";
-import { getPost, posts, formatDate } from "@/lib/blog-data";
+import { getPost, posts, formatDate, type Post } from "@/lib/blog-data";
+import { fetchPublishedFirebasePosts } from "@/lib/blog-firebase";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
-    const post = getPost(params.slug);
-    if (!post) throw notFound();
+    // Static posts stay authoritative; unknown slugs fall back to published
+    // Firebase posts in the component (the Firebase client is browser-only).
+    const post = getPost(params.slug) ?? null;
     return { post };
   },
   head: ({ loaderData, params }) => {
-    if (!loaderData) {
+    if (!loaderData?.post) {
       return {
         meta: [{ title: "Article unavailable | Turtle Wings" }, { name: "robots", content: "noindex" }],
       };
