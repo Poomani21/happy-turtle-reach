@@ -25,6 +25,14 @@ export const Route = createFileRoute("/blog/")({
 });
 
 function BlogIndex() {
+  const { data: firebasePosts } = useQuery({
+    queryKey: ["published-firebase-blogs"],
+    queryFn: fetchPublishedFirebasePosts,
+    initialData: [],
+    staleTime: 60_000,
+  });
+  const allPosts = mergePostsBySlug(posts, firebasePosts);
+
   return (
     <>
       <PageHero
