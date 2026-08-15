@@ -4,6 +4,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { PageHero } from "@/components/site/Sections";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { site } from "@/lib/site-content";
+import { useSiteContact } from "@/lib/site-contact";
 
 const title = "Contact & Enquiry — Book a Parent Consultation | Turtle Wings";
 const description =
@@ -24,6 +25,8 @@ export const Route = createFileRoute("/contact")({
 });
 
 function Contact() {
+  const contact = useSiteContact();
+
   return (
     <>
       <PageHero
@@ -41,7 +44,7 @@ function Contact() {
                 <li className="flex gap-3">
                   <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-leaf" />
                   <span className="min-w-0">
-                    {site.address.map((line) => (
+                    {contact.address.map((line) => (
                       <span key={line} className="block">
                         {line}
                       </span>
@@ -50,36 +53,39 @@ function Contact() {
                 </li>
                 <li className="flex gap-3">
                   <Phone aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-leaf" />
-                  <a className="font-bold hover:underline" href={site.phoneHref}>
-                    {site.phone}
+                  <a className="font-bold hover:underline" href={contact.phoneHref}>
+                    {contact.phone}
                   </a>
                 </li>
                 <li className="flex gap-3">
                   <MessageCircle aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-leaf" />
                   <a
                     className="font-bold hover:underline"
-                    href={site.whatsappHref}
+                    href={contact.whatsappHref}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    WhatsApp {site.whatsapp}
+                    WhatsApp {contact.whatsapp}
                   </a>
                 </li>
                 <li className="flex min-w-0 gap-3">
                   <Mail aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-leaf" />
-                  <a className="font-bold break-all hover:underline" href={`mailto:${site.email}`}>
-                    {site.email}
+                  <a
+                    className="font-bold break-all hover:underline"
+                    href={`mailto:${contact.email}`}
+                  >
+                    {contact.email}
                   </a>
                 </li>
                 <li className="flex gap-3">
                   <Globe aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-leaf" />
-                  <span>{site.website}</span>
+                  <span>{contact.website}</span>
                 </li>
                 <li className="flex gap-3">
                   <Clock aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-leaf" />
                   <span>
-                    {site.timings}
-                    <span className="mt-1 block text-muted-foreground">{site.closed}</span>
+                    {contact.timings}
+                    <span className="mt-1 block text-muted-foreground">{contact.closed}</span>
                   </span>
                 </li>
               </ul>
@@ -90,6 +96,17 @@ function Contact() {
                 is a chargeable session conducted by an RCI Certified Special Educator.
               </p>
             </div>
+            {contact.mapEmbedUrl ? (
+              <div className="overflow-hidden rounded-2xl border border-border shadow-card">
+                <iframe
+                  src={contact.mapEmbedUrl}
+                  title="Turtle Wings location map"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="aspect-[4/3] w-full border-0"
+                />
+              </div>
+            ) : null}
           </Reveal>
 
           <Reveal variant="right">
