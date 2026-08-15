@@ -44,7 +44,7 @@ function BlogIndex() {
       <section className="section-pad">
         <div className="container-site">
           <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post, i) => (
+            {allPosts.map((post, i) => (
               <Reveal as="li" key={post.slug} delay={i * 80} className="card-soft overflow-hidden">
                 <Link
                   to="/blog/$slug"
