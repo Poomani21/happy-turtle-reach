@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { PageHero, CtaBand } from "@/components/site/Sections";
 import { posts, formatDate } from "@/lib/blog-data";
+import { fetchPublishedFirebasePosts, mergePostsBySlug } from "@/lib/blog-firebase";
 
 const title = "Blog — Autism Support, Parenting & Early Learning | Turtle Wings";
 const description =
