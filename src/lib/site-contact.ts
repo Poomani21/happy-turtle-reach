@@ -58,7 +58,7 @@ export function resolveSiteContact(settings?: SiteSettings | null): SiteContact 
 
 export function useSiteContact(): SiteContact {
   const { data } = useQuery({
-    queryKey: ["site-settings"],
+    queryKey: ["settings", "site"],
     queryFn: async () => {
       try {
         return await fetchSiteSettings();

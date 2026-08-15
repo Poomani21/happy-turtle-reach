@@ -16,7 +16,6 @@ import { getDb, getFirebase } from "./firebase";
 import type {
   BlogDoc,
   EnquiryDoc,
-  MemberDoc,
   ProgramDoc,
   SiteSettings,
   VideoDoc,
@@ -59,10 +58,22 @@ export async function fetchPublishedVideos(): Promise<VideoDoc[]> {
   return rows.sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
 }
 
-/** Members are sensitive: only entries explicitly marked public are ever returned. */
-export async function fetchPublicMembers(): Promise<MemberDoc[]> {
-  return readAll<MemberDoc>("members", ["isPublic", true]);
+/**
+ * Admin allowlist check: the signed-in UID must have an `admins/{uid}` doc.
+ * Mirrors the Firestore/Storage `isAdmin()` rule, so the panel only opens for
+ * accounts that can actually write. Any error (including permission-denied for
+ * non-admins) resolves to false.
+ */
+export async function isAdminUser(uid: string): Promise<boolean> {
+  try {
+    const db = await getDb();
+    const snap = await getDoc(doc(db, "admins", uid));
+    return snap.exists();
+  } catch {
+    return false;
+  }
 }
+
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {
   const db = await getDb();
